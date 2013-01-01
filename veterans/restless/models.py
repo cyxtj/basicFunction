@@ -1,6 +1,7 @@
 #coding=utf-8
 
 import uuid
+import datetime
 from veterans.main import veteransApp
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -35,6 +36,12 @@ class drug(db.Model):
         data['objects'] = tempList
         return data
 
+    @classmethod
+    def post_preprocessor(self, data):
+        data['DRUGid'] = str(uuid.uuid4())
+        data['createDay'] = str(datetime.datetime.now())
+        return data
+
 class fixedrecipe(db.Model):
     FREPid = db.Column(db.String(36), nullable=False, primary_key=True)
     code = db.Column(db.String(20), nullable=True)
@@ -57,6 +64,12 @@ class fixedrecipe(db.Model):
             tempList[i]["FREPid"] = temp['FREPid']
             tempList[i]["name"] = temp['name']
         data['object'] = tempList
+        return data
+
+    @classmethod
+    def post_preprocessor(self, data):
+        data['FREPid'] = str(uuid.uuid4())
+        data['createDay'] = str(datetime.datetime.now())
         return data
 
 
@@ -82,6 +95,13 @@ class fixedrecipeItem(db.Model):
             tempList[i]["DRUGid"] = temp['DRUGid']
         data['objects'] = tempList
         return data
+
+    @classmethod
+    def post_preprocessor(self, data):
+        data['FRITid'] = str(uuid.uuid4())
+        data['createDay'] = str(datetime.datetime.now())
+        return data
+
 
 class ChineseDisease(db.Model):
     CDISid = db.Column(db.String(36), nullable=False, primary_key=True)
@@ -112,7 +132,7 @@ class ChineseDisease(db.Model):
         return data
 
     @classmethod
-    def post_preprocessor(classname, data):
+    def post_preprocessor(self, data):
         data['CDISid'] = str(uuid.uuid4())
-        print data['CDISid'] 
+        data['createDay'] = str(datetime.datetime.now())
         return data

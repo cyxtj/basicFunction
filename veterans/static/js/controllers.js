@@ -37,7 +37,7 @@ function DrugListCtrl($scope, $http) {
 
     //点击“1” or "跳至“ 查询显示特定页数的drug列表
     $scope.pagination.setPage = function (page) {
-        if(angular.isNumber(page)) {
+        if(angular.isNumber(page) && page>0) {
             $http({method:"GET", url:"api/drug", params:{"q":$scope.queryStr, "page":page}}).success(listSuccess);
         }
     };
@@ -139,7 +139,7 @@ function ChineseDiseaseCtrl($scope, $http) {
 
     //点击“1” or "跳至“ 查询显示特定页数的chinese_disease列表
     $scope.pagination.setPage = function (page) {
-        if(angular.isNumber(page)) {
+        if(angular.isNumber(page) && page>0) {
             $http({method:"GET", url:"api/chinese_disease", params:{"q":$scope.queryStr, "page":page}}).success(listSuccess);
         }
     };
@@ -170,12 +170,10 @@ function ChineseDiseaseCtrl($scope, $http) {
             $scope.view_or_not = view_or_not;
         }
     };
-
     //点击“关闭” 关闭弹出窗口
     $scope.close = function () {
         $scope.shouldBeOpen = false;
     };
-
     //点击“提交” 提交新建或修改的chinese_disease
     $scope.submit = function () {
         //若是点击“修改”
@@ -196,14 +194,12 @@ function ChineseDiseaseCtrl($scope, $http) {
         $scope.open_delete_alert = true
         $scope.chinese_disease_to_delete = para
     }
-
     $scope.delete = function (para) {
         $scope.close_alert()
         $http.delete('api/chinese_disease/'+para).success(function(data) { 
             $scope.pagination.setPage($scope.pagination.currentPage);
         });
     }
-
     $scope.close_alert= function(){
         $scope.open_delete_alert = false
     }
