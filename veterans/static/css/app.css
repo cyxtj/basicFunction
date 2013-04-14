@@ -1,0 +1,52 @@
+/* app css stylesheet */
+
+body {
+    background-color: #fff;
+}
+
+
+.veterans-unit {
+    background-color: #fff;
+}
+
+.float-left {
+    float: left;
+}
+
+.showBorderRed {
+    border: 1px solid red;
+}
+
+.showBorderBlue {
+    border: 1px solid blue;
+}
+.showBgRed {
+    background-color: red;
+}
+
+.showBgBlue {
+    background-color: blue;
+}
+
+.padding-bottom-20 {
+    padding-bottom: 20px;
+}
+
+// sidebar related
+.veterans-sidebar {
+    background-color: #fff;
+}
+
+.veterans-sidebar .accordion-heading {
+    background-color: #379f15; 
+}
+
+.veterans-sidebar .accordion-heading a {
+    color: #fff;
+}
+
+.veterans-sidebar .nav-list > li > a:hover {
+    color: #fff;
+    background-color: #379f15; 
+}
+

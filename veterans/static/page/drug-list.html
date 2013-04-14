@@ -1,0 +1,128 @@
+<!-- header --><!--{{{-->
+<div class="row-fluid">
+    <div class="span4">
+        <ul class="breadcrumb">
+            <li><a href="#">首页</a> <span class="divider">/</span></li>
+            <li><a href="#">基础数据维护</a> <span class="divider">/</span></li>
+            <li class="active">药品维护</li>
+        </ul>
+    </div>
+</div><!-- end row 1 -->
+<!--}}}-->
+
+<!-- search and add --><!--{{{-->
+<div class="row-fluid padding-bottom-20 ">
+    <div class="span2">
+        <button class="btn btn-info" ng-click="open(null)">添加药品</button>
+    </div>
+
+    <div class="offset6 span4">
+        <form class="form-search">
+            <div class="input-append">
+                <input type="text" class="search-query" placeholder="药品名称" ng-model="searchStr"/>
+                <button type="submit" class="btn btn-info" ng-click=search(searchStr)>搜索</button>
+            </div>
+        </form>
+    </div>
+</div><!-- end row 2 --><!--}}}-->
+
+<!-- form --><!--{{{-->
+<div class="row-fluid">
+    <div class="span12">
+        <table class="table table-bordered table-striped table-hover table-condensed">
+            <thead>
+            <tr>
+                <th>药品名称</th>
+                <th>编号</th>
+                <th>是否标准</th>
+                <th>对应专家</th>
+                <th>数据状态</th>
+                <th>数据操作</th>
+                <th>详细</th>
+                <th>删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="drug_item in drug_list">
+                <td>{{drug_item.name}}</td>
+                <td>{{drug_item.code}}</td>
+                <td>{{drug_item.isClassical}}</td>
+                <td>{{drug_item.SPETid}}</td>
+                <td>{{drug_item.state}}</td>
+                <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, flase)">修改</button></td>
+                <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, true)">详细</button></td>
+                <td><button class="btn btn-small btn-info" ng-click="delete(drug_item.DRUGid)">删除</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div><!-- end row 3 --><!--}}}-->
+
+<!-- pagination -->
+<div class="row-fluid">
+
+    <div class="span6">
+        <pagination boundary-links="true" num-pages="pagination.noOfPages" current-page="pagination.currentPage" on-select-page="pagination.setPage(page)" max-size="pagination.maxSize"></pagination>
+    </div>
+    <div class="span3">
+        一共{{pagination.numResults}}条数据
+    </div>
+    <div class="span3">
+        <form>
+            <div class="control-group">
+                <div class="controls">
+                    <button class="btn" ng-click="pagination.setPage(jumpTo)">跳至</button>
+                    <input type="number" class="input-mini" ng-model="jumpTo"/>
+                </div>
+            </div>
+        </form> 
+    </div>
+
+</div><!-- end row 4 -->
+
+<!-- modal --><!--{{{-->
+<div modal="shouldBeOpen" close="close()" options="opts">
+    <div class="modal-header">
+        <h3>{{form_head}}</h3>
+        <span>{{msg}}</span>
+    </div>
+    <div class="modal-body">
+
+        <form class="form-horizontal">
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label">id</label>
+                <div class="controls">
+                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_drug.DRUGid" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label">药品名称</label>
+                <div class="controls">
+                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_drug.name" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">是否标准</label>
+                <div class="controls">
+                    <!-- Inline Radios -->
+                    <label class="radio inline">
+                        <input ng-disabled="view_or_not" type="radio" value="1" name="isClassical" checked="checked" ng-model="new_drug.isClassical" />
+                        是
+                    </label>
+                    <label class="radio inline">
+                        <input ng-disabled="view_or_not" type="radio" value="0" name="isClassical" ng-model="new_drug.isClassical" />
+                        否
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="submit()">提交</button>
+        <button class="btn btn-warning" ng-click="close()">关闭</button>
+    </div>
+</div><!--}}}-->

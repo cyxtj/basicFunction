@@ -1,0 +1,35 @@
+/* app css stylesheet */
+
+body {
+    background-color: #fff;
+}
+
+.metrouicss .page {
+    width: 1024px;
+    margin: auto;
+    background-color: #fff;
+}
+
+.metrouicss a {
+  color: #000;
+}
+
+.metrouicss a:hover {
+  color: #00a300;
+}
+
+.metrouicss .accordion.green > li > a {
+  background-color: #00a300;
+  color: #fff;
+}
+.metrouicss .accordion.green > li.active > a {
+  background-color: #1e7145;
+}
+
+.metrouicss .veterans-unit {
+  padding: 20px;
+}
+
+.float-left {
+    float: left;
+}
