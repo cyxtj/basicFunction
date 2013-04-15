@@ -4,7 +4,7 @@
         <ul class="breadcrumb">
             <li><a href="#">首页</a> <span class="divider">/</span></li>
             <li><a href="#">基础数据维护</a> <span class="divider">/</span></li>
-            <li class="active">药品维护</li>
+            <li class="active">中医疾病维护</li>
         </ul>
     </div>
 </div><!-- end row 1 -->
@@ -13,13 +13,13 @@
 <!-- search and add --><!--{{{-->
 <div class="row-fluid padding-bottom-20 ">
     <div class="span2">
-        <button class="btn btn-info" ng-click="open(null)">添加药品</button>
+        <button class="btn btn-info" ng-click="open(null)">添加中医疾病</button>
     </div>
 
     <div class="offset6 span4">
         <form class="form-search">
             <div class="input-append">
-                <input type="text" class="search-query" placeholder="药品名称" ng-model="searchStr"/>
+                <input type="text" class="search-query" placeholder="中医疾病名称" ng-model="searchStr"/>
                 <button type="submit" class="btn btn-info" ng-click=search(searchStr)>搜索</button>
             </div>
         </form>
@@ -32,9 +32,10 @@
         <table class="table table-bordered table-striped table-hover table-condensed">
             <thead>
             <tr>
-                <th>药品名称</th>
-                <th>编号</th>
-                <th>是否标准</th>
+                <th>中医疾病名称</th>
+                <th>代码</th>
+                <th>级别</th>
+                <th>是标准的</th>
                 <th>对应专家</th>
                 <th>数据状态</th>
                 <th>数据操作</th>
@@ -43,22 +44,23 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="drug_item in drug_list">
-                <td>{{drug_item.name}}</td>
-                <td>{{drug_item.code}}</td>
-                <td>{{drug_item.isClassical}}</td>
-                <td>{{drug_item.SPETid}}</td>
-                <td>{{drug_item.state}}</td>
-                <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, flase)">修改</button></td>
-                <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, true)">详细</button></td>
-                <td><button class="btn btn-small btn-info" onclick = "alert()" ng-click="delete(drug_item.DRUGid)">删除</button></td>
+            <tr ng-repeat="chinese_disease_item in chinese_disease_list">
+                <td>{{chinese_disease_item.name}}</td>
+                <td>{{chinese_disease_item.code}}</td>
+                <td>{{chinese_disease_item.level}}</td>
+                <td>{{chinese_disease_item.isClassical}}</td>
+                <td>{{chinese_disease_item.SPETid}}</td>
+                <td>{{chinese_disease_item.state}}</td>
+                <td><a class="btn btn-info" href="">数据操作</a></td>
+                <td><a class="btn btn-info" href="">详细</a></td>
+                <td><a class="btn btn-info" href="">删除</a></td>
             </tr>
             </tbody>
         </table>
     </div>
 </div><!-- end row 3 --><!--}}}-->
 
-<!-- pagination -->
+<!-- pagination --><!--{{{-->
 <div class="row-fluid">
 
     <div class="span6">
@@ -75,10 +77,10 @@
                     <input type="number" class="input-mini" ng-model="jumpTo"/>
                 </div>
             </div>
-        </form> 
+        </form>
     </div>
 
-</div><!-- end row 4 -->
+</div><!-- end row 4 --><!--}}}-->
 
 <!-- modal --><!--{{{-->
 <div modal="shouldBeOpen" close="close()" options="opts">
@@ -91,17 +93,26 @@
         <form class="form-horizontal">
             <div class="control-group">
                 <!-- Text input-->
-                <label class="control-label">id</label>
+                <label class="control-label">父疾病</label>
                 <div class="controls">
-                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_drug.DRUGid" />
+                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_chinese_disease.parentcode" />
                 </div>
             </div>
 
             <div class="control-group">
                 <!-- Text input-->
-                <label class="control-label">药品名称</label>
+                <label class="control-label">疾病代码</label>
                 <div class="controls">
-                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_drug.name" />
+                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_chinese_disease.code" />
+                </div>
+            </div>
+
+
+            <div class="control-group">
+                <!-- Text input-->
+                <label class="control-label">疾病名称</label>
+                <div class="controls">
+                    <input ng-disabled="view_or_not" type="text" placeholder="" class="input-xlarge" ng-model="new_chinese_disease.name" />
                 </div>
             </div>
 
@@ -110,11 +121,11 @@
                 <div class="controls">
                     <!-- Inline Radios -->
                     <label class="radio inline">
-                        <input ng-disabled="view_or_not" type="radio" value="1" name="isClassical" checked="checked" ng-model="new_drug.isClassical" />
+                        <input ng-disabled="view_or_not" type="radio" value="1" name="isClassical" checked="checked" ng-model="new_chinese_disease.isClassical" />
                         是
                     </label>
                     <label class="radio inline">
-                        <input ng-disabled="view_or_not" type="radio" value="0" name="isClassical" ng-model="new_drug.isClassical" />
+                        <input ng-disabled="view_or_not" type="radio" value="0" name="isClassical" ng-model="new_chinese_disease.isClassical" />
                         否
                     </label>
                 </div>

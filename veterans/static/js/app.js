@@ -13,7 +13,7 @@ veterans.config(['$routeProvider', function($routeProvider) {
     
     $routeProvider.when('/wdisease', {templateUrl: 'static/page/wdisease.html', controller: wdiseaseCtrl});
    
-    $routeProvider.when('/cdisease', {templateUrl: 'static/page/cdisease.html', controller: cdiseaseCtrl});
+    $routeProvider.when('/chinese_disease', {templateUrl: 'static/page/chinese_disease.html', controller: ChineseDiseaseCtrl});
     
     $routeProvider.when('/semiotic', {templateUrl: 'static/page/semiotic.html', controller: semioticCtrl});
     // addinfo

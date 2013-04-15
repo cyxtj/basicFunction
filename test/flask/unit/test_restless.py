@@ -5,10 +5,12 @@ from veterans.main import veteransApp
 from veterans.restless.models import *
 import json
 
+
 class TestFixedrecipeItem(TestCase):
 
     def create_app(self):
         veteransApp.config['TESTING'] = True
+        veteransApp.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:levis822@localhost:3306/test_veterans'
         return veteransApp
 
     def setUp(self):
@@ -51,7 +53,6 @@ class TestFixedrecipeItem(TestCase):
     def test_drug_get_by_id(self):
         r = self.client.get('/api/drug/e28b7d9c-e817-47c1-b227-97d8eca021a7')
         self.assertEqual(json.loads(r.data)['DRUGid'], 'e28b7d9c-e817-47c1-b227-97d8eca021a7')
-        print r.__dict__
 
     def test_drug_add(self):
         r = self.client.post('/api/drug', data='{"DRUGid":"e28b7d9c-e817-47c1-b227-97d8eca021a7","code":"2062","name":"test杏仁","unit":"g"}')
@@ -98,7 +99,6 @@ class TestFixedrecipeItem(TestCase):
 
     def test_fixedrecipeItem_get_by_id(self):
         r = self.client.get('/api/fixedrecipe_item/9c18a29f-faa1-494d-839c-7a89cba439e8')
-        #print r.data
         self.assertEqual(json.loads(r.data)['FRITid'], '9c18a29f-faa1-494d-839c-7a89cba439e8')
 
     def test_fixedrecipeItem_add(self):
@@ -120,6 +120,49 @@ class TestFixedrecipeItem(TestCase):
         #fixedrecipe should remain
         r = self.client.get('/api/fixedrecipe')
         self.assertEqual(json.loads(r.data)['num_results'], 1)
+
+
+class TestChineseDisease(TestCase):
+
+    def create_app(self):
+        veteransApp.config['TESTING'] = True
+        veteransApp.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:levis822@localhost:3306/test_veterans'
+        return veteransApp
+
+    def setUp(self):
+        db.session.remove()
+        db.drop_all()
+        db.create_all()
+        self.client = veteransApp.test_client()
+
+        #add basic data to database
+        new_chinese_disease = ChineseDisease(CDISid='590c2344-1e26-408a-b078-79f35385c3b3',code='01',name='中医妇科',parentcode='-1',level='1',isClassical='1',SPETid='',illustration='',createDay='2008-04-09 14:50:55.000',optrid='',state='3')
+        db.session.add(new_chinese_disease)
+        db.session.commit()
+
+    def tearDown(self):
+        pass
+        #db.session.remove()
+        #db.drop_all()
+
+    def test_chinese_disease_get_all(self):
+        r = self.client.get('/api/chinese_disease')
+        self.assertEqual(json.loads(r.data)['num_results'], 1)
+
+    def test_chinese_disease_get_by_id(self):
+        r = self.client.get('/api/chinese_disease/590c2344-1e26-408a-b078-79f35385c3b3')
+        self.assertEqual(json.loads(r.data)['CDISid'], '590c2344-1e26-408a-b078-79f35385c3b3')
+
+    def test_chinese_disease_add(self):
+        r = self.client.post('/api/chinese_disease', data='{"CDISid":"test2344-1e26-408a-b078-79f35385c3b3", "code":"01", "name":"中医妇科", "parentcode":"-1", "level":"1", "isClassical":"1", "SPETid":"", "illustration":"", "createDay":"2008-04-09 14:50:55.000", "optrid":"", "state":"3"}')
+        r = self.client.get('/api/chinese_disease')
+        self.assertEqual(json.loads(r.data)['num_results'], 1)
+
+    def test_chinese_disease_delete(self):
+        r  = self.client.delete('/api/chinese_disease/590c2344-1e26-408a-b078-79f35385c3b3')
+        r = self.client.get('/api/chinese_disease')
+        self.assertEqual(json.loads(r.data)['num_results'], 0)
+
 
 if __name__ == '__main__':
     unittest.main()

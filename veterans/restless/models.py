@@ -1,5 +1,6 @@
 #coding=utf-8
 
+import uuid
 from veterans.main import veteransApp
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -82,3 +83,36 @@ class fixedrecipeItem(db.Model):
         data['objects'] = tempList
         return data
 
+class ChineseDisease(db.Model):
+    CDISid = db.Column(db.String(36), nullable=False, primary_key=True)
+    code = db.Column(db.String(20), nullable=True)
+    name = db.Column(db.String(100), nullable=True)
+    parentcode = db.Column(db.String(20), nullable=True) #comment '无父节点,用-1代表'
+    level = db.Column(db.SMALLINT, nullable=True) #comment '从1开始'
+    isClassical = db.Column(db.Boolean, nullable=True, default=1) #comment '1:是标准的;0:非标准的'
+    SPETid = db.Column(db.String(36), nullable=True, default=' ')
+    illustration = db.Column(db.Text, nullable=True, default=' ')
+    createDay = db.Column(db.DateTime, nullable=True, default='1900-1-1')
+    optrid = db.Column(db.String(36), nullable=True, default=' ')
+    state = db.Column(db.SMALLINT, nullable=True, default=0) #comment '0:正常;1:锁定'
+
+    @classmethod
+    def get_all(self, data):
+        tempList = []
+        for (i, temp) in enumerate(data['objects']):
+            tempList.append({})
+            tempList[i]["CDISid"]=temp['CDISid']
+            tempList[i]["code"]=temp['code']
+            tempList[i]["name"]=temp['name']
+            tempList[i]["level"]=temp['level']
+            tempList[i]["isClassical"]=temp['isClassical']
+            tempList[i]["SPETid"]=temp['SPETid']
+            tempList[i]["state"]=temp['state']
+        data['objects'] = tempList
+        return data
+
+    @classmethod
+    def post_preprocessor(classname, data):
+        data['CDISid'] = str(uuid.uuid4())
+        print data['CDISid'] 
+        return data

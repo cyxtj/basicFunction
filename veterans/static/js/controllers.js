@@ -4,7 +4,7 @@
 function SidebarCtrl($scope) {
     $scope.basicdata_group = [{"url":"#/drug-list", "name":"药品维护"},
                               {"url":"#/fixedrecipe", "name":"处方库维护"},
-                              {"url":"#/cdisease", "name":"中医疾病维护"},
+                              {"url":"#/chinese_disease", "name":"中医疾病维护"},
                               {"url":"#/wdisease", "name":"西医疾病维护"},
                               {"url":"#/semiotic", "name":"症候库维护"},
                               {"url":"#/dmethod", "name":"治法库维护"},
@@ -61,7 +61,7 @@ function DrugListCtrl($scope, $http) {
             $scope.drug_id = para
             $scope.form_head = "修改"
             $scope.view_or_not = view_or_not;
-        } else {//若是点击“详细”
+        } else {//若是点击“添加药品”
             $scope.drug_id = null
             $scope.new_drug = null
             $scope.msg = ''
@@ -81,7 +81,7 @@ function DrugListCtrl($scope, $http) {
             $http.put('api/drug/'+$scope.drug_id, $scope.new_drug).success(function(data, status) { 
                 $scope.msg = status
             });
-        }else {//若是点击“详细”
+        }else {//若是点击“新建药品”
             $http.post('api/drug', $scope.new_drug).success(function(data, status) { 
                 $scope.msg = status
             });
@@ -92,6 +92,7 @@ function DrugListCtrl($scope, $http) {
     $scope.delete = function (para) {
         $http.delete('api/drug/'+para).success(function(data) { 
             $scope.pagination.setPage($scope.pagination.currentPage);
+
         });
     }
 
@@ -102,13 +103,92 @@ function DrugListCtrl($scope, $http) {
 
 }
 
-//{{{
 function fixedrecipeCtrl($scope, $routeParams) {
     $scope.fixedrecipe_list = [ {"name":"2", "code":"2", "effect":"2",  "isClassical":"2", "SPETid":"2", "py":"2", "wb":"2", "state":"2"}]
 } 
 
-function cdiseaseCtrl($scope, $routeParams) {
-    $scope.cdisease_list = [ {"name":"3", "code":"3", "level":"3" ,"isClassical":"3", "SPETid":"3",  "state":"3"}]
+function ChineseDiseaseCtrl($scope, $http) {
+    angular.element(".breadcrumb").css("background-color", "#f9f9f9")
+    $scope.pagination = {}
+    $scope.pagination.maxSize = 5; 
+    $scope.msg = "";
+    $scope.chinese_disease_id= null;
+    $scope.view_or_not = null;
+    $scope.form_head = "添加中医疾病";
+    $scope.queryStr = null;
+
+    //get成功时调用的函数， 用于显示数据
+    var listSuccess = function(data, status) { 
+        $scope.chinese_disease_list = data.objects
+        $scope.pagination.noOfPages = data.total_pages
+        $scope.pagination.currentPage = data.page;
+        $scope.pagination.numResults = data.num_results;
+    }
+
+    //查询显示chinese_disease列表
+    $http.get('api/chinese_disease').success(listSuccess);
+
+    //点击“1” or "跳至“ 查询显示特定页数的chinese_disease列表
+    $scope.pagination.setPage = function (page) {
+        if(angular.isNumber(page)) {
+            $http({method:"GET", url:"api/chinese_disease", params:{"q":$scope.queryStr, "page":page}}).success(listSuccess);
+        }
+    };
+
+    //点击“查找” 查找关键字, 显示返回的chinese_disease列表
+    $scope.search = function(para){
+        var filters = [{"name": "name", "op": "like", "val": "%"+$scope.searchStr+"%"}];
+        $scope.queryStr = JSON.stringify({"filters": filters});
+        $http({method:"GET", url:"api/chinese_disease", params:{"q":$scope.queryStr}}).success(listSuccess);
+    }
+
+    //点击按钮“修改”or“详细”or“新建”， 弹出页面，修改or显示or新建表单
+    //para是CDISid or null， view_or_not 是控制仅查看还是可以修改
+    $scope.open = function (para, view_or_not) {
+        $scope.shouldBeOpen = true;
+        //若是点击“修改”
+        if (para != null) {
+            $http.get('api/chinese_disease/'+para).success(function(data, status) { 
+                $scope.new_chinese_disease= data
+            });
+            $scope.chinese_disease_id = para
+            $scope.form_head = "修改"
+            $scope.view_or_not = view_or_not;
+        } else {//若是点击“添加药品”
+            $scope.chinese_disease_id = null
+            $scope.new_chinese_disease = null
+            $scope.msg = ''
+            $scope.view_or_not = view_or_not;
+        }
+    };
+
+    //点击“关闭” 关闭弹出窗口
+    $scope.close = function () {
+        $scope.shouldBeOpen = false;
+    };
+
+    //点击“提交” 提交新建或修改的chinese_disease
+    $scope.submit = function () {
+        //若是点击“修改”
+        if ($scope.chinese_disease_id!= null) {
+            $http.put('api/chinese_disease/'+$scope.chinese_disease_id, $scope.new_chinese_disease).success(function(data, status) { 
+                console.log(data)
+                $scope.msg = status
+            });
+        }else {//若是点击“新建药品”
+            $http.post('api/chinese_disease', $scope.new_chinese_disease).success(function(data, status) { 
+                $scope.msg = status
+            });
+        }
+    }; 
+
+    //点击“删除” 删除相应的chinese_disease
+    $scope.delete = function (para) {
+        $http.delete('api/chinese_disease/'+para).success(function(data) { 
+            $scope.pagination.setPage($scope.pagination.currentPage);
+        })
+    }
+
 }
 
 function wdiseaseCtrl($scope, $routeParams) {
@@ -134,4 +214,3 @@ function dtemplateCtrl($scope, $routeParams) {
 function examinationCtrl($scope, $routeParams) {
     $scope. examination_list = [ {"name":"9", "code":"9","class":"9","isClassical":"9","SPETid":"9","state":"9"}]
 }
-//}}}
