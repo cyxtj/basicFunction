@@ -51,9 +51,10 @@
                 <td>{{chinese_disease_item.isClassical}}</td>
                 <td>{{chinese_disease_item.SPETid}}</td>
                 <td>{{chinese_disease_item.state}}</td>
-                <td><a class="btn btn-info" href="">数据操作</a></td>
-                <td><a class="btn btn-info" href="">详细</a></td>
-                <td><a class="btn btn-info" href="">删除</a></td>
+                <td><button class="btn btn-small btn-info" ng-click="open(chinese_disease_item.CDISid, flase)">修改</button></td>
+                <td><button class="btn btn-small btn-info" ng-click="open(chinese_disease_item.CDISid, true)">详细</button></td>
+                <td><button class="btn btn-small btn-info" ng-click="alert(chinese_disease_item)">删除</button></td>
+            </tr>
             </tr>
             </tbody>
         </table>
@@ -82,7 +83,22 @@
 
 </div><!-- end row 4 --><!--}}}-->
 
-<!-- modal --><!--{{{-->
+<!-- alert --><!--{{{-->
+<div modal="open_delete_alert" close="close_alert()" >
+    <div class="alert alert-block">
+        <strong>注意：</strong> 
+        <br>
+        确定要删除下列中医疾病吗？
+        <br>
+        <strong>{{chinese_disease_to_delete.name}}</strong>
+        <div class="modal-footer">
+            <button class="btn btn-success" ng-click="delete(chinese_disease_to_delete.CDISid)" ng-click="close_alert()">确定删除</button>
+            <button class="btn btn-info"ng-click="close_alert()">取消</button>
+        </div>
+  </div>
+</div><!--}}}-->
+
+<!-- show or add or edit --><!--{{{-->
 <div modal="shouldBeOpen" close="close()" options="opts">
     <div class="modal-header">
         <h3>{{form_head}}</h3>
@@ -133,7 +149,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="submit()">提交</button>
+        <button class="btn btn-warning" ng-click="submit()" ng-disabled="view_or_not">提交</button>
         <button class="btn btn-warning" ng-click="close()">关闭</button>
     </div>
 </div><!--}}}-->

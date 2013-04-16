@@ -88,12 +88,21 @@ function DrugListCtrl($scope, $http) {
         }
     }; 
 
-    //点击“删除” 删除相应的drug
+    //点击“删除” 弹出警示窗口 删除相应的drug
     $scope.delete = function (para) {
+        $scope.close_alert()
         $http.delete('api/drug/'+para).success(function(data) { 
             $scope.pagination.setPage($scope.pagination.currentPage);
-
         });
+    }
+
+    $scope.alert = function(para){
+        $scope.open_delete_alert = true
+        $scope.drug_to_delete = para
+    }
+
+    $scope.close_alert= function(){
+        $scope.open_delete_alert = false
     }
 
     $scope.opts = {
@@ -182,13 +191,22 @@ function ChineseDiseaseCtrl($scope, $http) {
         }
     }; 
 
-    //点击“删除” 删除相应的chinese_disease
-    $scope.delete = function (para) {
-        $http.delete('api/chinese_disease/'+para).success(function(data) { 
-            $scope.pagination.setPage($scope.pagination.currentPage);
-        })
+    //点击“删除” 弹出警示窗口 删除相应的chinese_disease
+    $scope.alert = function(para){
+        $scope.open_delete_alert = true
+        $scope.chinese_disease_to_delete = para
     }
 
+    $scope.delete = function (para) {
+        $scope.close_alert()
+        $http.delete('api/chinese_disease/'+para).success(function(data) { 
+            $scope.pagination.setPage($scope.pagination.currentPage);
+        });
+    }
+
+    $scope.close_alert= function(){
+        $scope.open_delete_alert = false
+    }
 }
 
 function wdiseaseCtrl($scope, $routeParams) {

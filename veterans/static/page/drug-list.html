@@ -51,14 +51,14 @@
                 <td>{{drug_item.state}}</td>
                 <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, flase)">修改</button></td>
                 <td><button class="btn btn-small btn-info" ng-click="open(drug_item.DRUGid, true)">详细</button></td>
-                <td><button class="btn btn-small btn-info" onclick = "alert()" ng-click="delete(drug_item.DRUGid)">删除</button></td>
+                <td><button class="btn btn-small btn-info" ng-click="alert(drug_item)">删除</button></td>
             </tr>
             </tbody>
         </table>
     </div>
 </div><!-- end row 3 --><!--}}}-->
 
-<!-- pagination -->
+<!-- pagination --><!--{{{-->
 <div class="row-fluid">
 
     <div class="span6">
@@ -78,9 +78,24 @@
         </form> 
     </div>
 
-</div><!-- end row 4 -->
+</div><!-- end row 4 --><!--}}}-->
 
-<!-- modal --><!--{{{-->
+<!-- alert --><!--{{{-->
+<div modal="open_delete_alert" close="close_alert()" >
+    <div class="alert alert-block">
+        <strong>注意：</strong> 
+        <br>
+        确定要删除下列药品吗？
+        <br>
+        <strong>{{drug_to_delete.name}}</strong>
+        <div class="modal-footer">
+            <button class="btn btn-success" ng-click="delete(drug_to_delete.DRUGid)" ng-click="close_alert()">确定删除</button>
+            <button class="btn btn-info"ng-click="close_alert()">取消</button>
+        </div>
+  </div>
+</div><!--}}}-->
+
+<!-- show or add or edit --><!--{{{-->
 <div modal="shouldBeOpen" close="close()" options="opts">
     <div class="modal-header">
         <h3>{{form_head}}</h3>
@@ -122,7 +137,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="submit()">提交</button>
+        <button class="btn btn-warning" ng-click="submit()" ng-disabled="view_or_not">提交</button>
         <button class="btn btn-warning" ng-click="close()">关闭</button>
     </div>
 </div><!--}}}-->
