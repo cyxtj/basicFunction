@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-function SidebarCtrl($scope) {
+function SidebarCtrl($scope) {//{{{
     $scope.basicdata_group = [{"url":"#/drug-list", "name":"药品维护"},
                               {"url":"#/fixedrecipe", "name":"处方库维护"},
                               {"url":"#/chinese_disease", "name":"中医疾病维护"},
@@ -12,16 +12,15 @@ function SidebarCtrl($scope) {
                               {"url":"#dtemplate", "name":"问诊模板维护"},
                               {"url":"#/examination", "name":"检查项目维护"}
                             ];
-}
+}//}}}
 
-function DrugListCtrl($scope, $http) {
+function DrugListCtrl($scope, $http) {//{{{
     angular.element(".breadcrumb").css("background-color", "#f9f9f9")
     $scope.pagination = {}
     $scope.pagination.maxSize = 5; 
     $scope.msg = "";
     $scope.drug_id = null;
     $scope.view_or_not = null;
-    $scope.form_head = "添加药品";
     $scope.queryStr = null;
 
     //get成功时调用的函数， 用于显示数据
@@ -58,14 +57,18 @@ function DrugListCtrl($scope, $http) {
             $http.get('api/drug/'+para).success(function(data, status) { 
                 $scope.new_drug = data
             });
-            $scope.drug_id = para
-            $scope.form_head = "修改"
             $scope.view_or_not = view_or_not;
+            $scope.drug_id = para
+            if (view_or_not == true) {
+                $scope.form_head = "详细"
+            } else {
+                $scope.form_head = "修改"
+            }
         } else {//若是点击“添加药品”
+            $scope.form_head = "添加药品";
             $scope.drug_id = null
             $scope.new_drug = null
             $scope.msg = ''
-            $scope.view_or_not = view_or_not;
         }
     };
 
@@ -110,13 +113,112 @@ function DrugListCtrl($scope, $http) {
         dialogFade:true
     };
 
-}
+}//}}}
 
-function fixedrecipeCtrl($scope, $routeParams) {
-    $scope.fixedrecipe_list = [ {"name":"2", "code":"2", "effect":"2",  "isClassical":"2", "SPETid":"2", "py":"2", "wb":"2", "state":"2"}]
+function fixedrecipeCtrl($scope, $http) {
+    angular.element(".breadcrumb").css("background-color", "#f9f9f9")
+    $scope.pagination = {}
+    $scope.pagination.maxSize = 5; 
+    $scope.msg = "";
+    $scope.fixedrecipe_id = null;
+    $scope.view_or_not = null;
+    $scope.form_head = "添加处方";
+    $scope.queryStr = null;
+
+    //get成功时调用的函数， 用于显示数据
+    var listSuccess = function(data, status) { 
+        $scope.fixedrecipe_list = data.objects
+        $scope.pagination.noOfPages = data.total_pages
+        $scope.pagination.currentPage = data.page;
+        $scope.pagination.numResults = data.num_results;
+    }
+
+    //查询显示fixedrecipe列表
+    $http.get('api/fixedrecipe').success(listSuccess);
+
+    //点击“1” or "跳至“ 查询显示特定页数的fixedrecipe列表
+    $scope.pagination.setPage = function (page) {
+        if(angular.isNumber(page) && page>0) {
+            $http({method:"GET", url:"api/fixedrecipe", params:{"q":$scope.queryStr, "page":page}}).success(listSuccess);
+        }
+    };
+
+    //点击“查找” 查找关键字, 显示返回的fixedrecipe列表
+    $scope.search = function(para){
+        var filters = [{"name": "name", "op": "like", "val": "%"+$scope.searchStr+"%"}];
+        $scope.queryStr = JSON.stringify({"filters": filters});
+        $http({method:"GET", url:"api/fixedrecipe", params:{"q":$scope.queryStr}}).success(listSuccess);
+    }
+    
+    //点击按钮“修改”or“详细”or“新建”， 弹出页面，修改or显示or新建表单
+    //para是fixedrecipeid or null， view_or_not 是控制仅查看还是可以修改
+    $scope.open = function (para, view_or_not) {
+        $scope.shouldBeOpen = true;
+        //若是点击“修改”
+        if (para != null) {
+            $http.get('api/fixedrecipe/'+para).success(function(data, status) { 
+                $scope.new_fixedrecipe = data
+                console.log(data)
+            });
+            $scope.view_or_not = view_or_not;
+            $scope.fixedrecipe_id = para
+            if (view_or_not == true) {
+                $scope.form_head = "详细"
+            } else {
+                $scope.form_head = "修改"
+            }
+        } else {//若是点击“添加处方”
+            $scope.form_head = "添加处方";
+            $scope.fixedrecipe_id = null
+            $scope.new_drug = null
+            $scope.msg = ''
+        }
+    };
+
+    //点击“关闭” 关闭弹出窗口
+    $scope.close = function () {
+        $scope.shouldBeOpen = false;
+    };
+
+    //点击“提交” 提交新建或修改的fixedrecipe
+    $scope.submit = function () {
+        //若是点击“修改”
+        if ($scope.fixedrecipe_id != null) {
+            $http.put('api/fixedrecipe/'+$scope.fixedrecipe_id, $scope.new_fixedrecipe).success(function(data, status) { 
+                $scope.msg = status
+            });
+        }else {//若是点击“新建处方”
+            $http.post('api/fixedrecipe', $scope.new_fixedrecipe).success(function(data, status) { 
+                $scope.msg = status
+            });
+        }
+    }; 
+
+    //点击“删除” 弹出警示窗口 删除相应的fixedrecipe
+    $scope.delete = function (para) {
+        $scope.close_alert()
+        $http.delete('api/fixedrecipe/'+para).success(function(data) { 
+            $scope.pagination.setPage($scope.pagination.currentPage);
+        });
+    }
+
+    $scope.alert = function(para){
+        $scope.open_delete_alert = true
+        $scope.fixedrecipe_to_delete = para
+    }
+
+    $scope.close_alert= function(){
+        $scope.open_delete_alert = false
+    }
+
+    $scope.opts = {
+        backdropFade: true,
+        dialogFade:true
+    };
+
 } 
 
-function ChineseDiseaseCtrl($scope, $http) {
+function ChineseDiseaseCtrl($scope, $http) {//{{{
     angular.element(".breadcrumb").css("background-color", "#f9f9f9")
     $scope.pagination = {}
     $scope.pagination.maxSize = 5; 
@@ -161,9 +263,14 @@ function ChineseDiseaseCtrl($scope, $http) {
                 $scope.new_chinese_disease= data
             });
             $scope.chinese_disease_id = para
-            $scope.form_head = "修改"
             $scope.view_or_not = view_or_not;
+            if (view_or_not == true) {
+                $scope.form_head = "详细"
+            } else {
+                $scope.form_head = "修改"
+            }
         } else {//若是点击“添加药品”
+            $scope.form_head = "添加中医疾病"
             $scope.chinese_disease_id = null
             $scope.new_chinese_disease = null
             $scope.msg = ''
@@ -179,7 +286,6 @@ function ChineseDiseaseCtrl($scope, $http) {
         //若是点击“修改”
         if ($scope.chinese_disease_id!= null) {
             $http.put('api/chinese_disease/'+$scope.chinese_disease_id, $scope.new_chinese_disease).success(function(data, status) { 
-                console.log(data)
                 $scope.msg = status
             });
         }else {//若是点击“新建药品”
@@ -227,4 +333,4 @@ function dtemplateCtrl($scope, $routeParams) {
 
 function examinationCtrl($scope, $routeParams) {
     $scope. examination_list = [ {"name":"9", "code":"9","class":"9","isClassical":"9","SPETid":"9","state":"9"}]
-}
+}//}}}

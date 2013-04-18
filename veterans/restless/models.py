@@ -63,6 +63,13 @@ class fixedrecipe(db.Model):
             tempList.append({})
             tempList[i]["FREPid"] = temp['FREPid']
             tempList[i]["name"] = temp['name']
+            tempList[i]["code"] = temp['code']
+            tempList[i]["effect"] = temp['effect']
+            tempList[i]["isClassical"] = temp['isClassical']
+            tempList[i]["SPETid"] = temp['SPETid']
+            tempList[i]["py"] = temp['py']
+            tempList[i]["wb"] = temp['wb']
+            tempList[i]["state"] = temp['state']
         data['object'] = tempList
         return data
 
@@ -70,6 +77,22 @@ class fixedrecipe(db.Model):
     def post_preprocessor(self, data):
         data['FREPid'] = str(uuid.uuid4())
         data['createDay'] = str(datetime.datetime.now())
+        for (i, temp) in enumerate(data['fixedrecipeItems']):
+            del data['fixedrecipeItems'][i]['drug_name']
+        return data
+
+    @classmethod
+    def put_preprocessor(self, data):
+        print data
+        return data
+
+    @classmethod
+    def get_by_id(self, data):
+        tempList = []
+        for (i, temp) in enumerate(data['fixedrecipeItems']):
+            id = (str(data['fixedrecipeItems'][i]['DRUGid']))
+            data['fixedrecipeItems'][i]['drug_name'] = drug.query.filter_by(DRUGid=id).first().name
+            
         return data
 
 
@@ -84,17 +107,6 @@ class fixedrecipeItem(db.Model):
     drug = db.relationship('drug', backref=db.backref('fixedrecipeItems', cascade='all, delete-orphan'))
     fixedrecipe = db.relationship('fixedrecipe', backref=db.backref('fixedrecipeItems', cascade='all, delete-orphan'))
     #primary key (FRITid)
-
-    @classmethod
-    def get_all(self, data):
-        tempList = []
-        for (i, temp) in enumerate(data['objects']):
-            tempList.append({})
-            tempList[i]["FRITid"] = temp['FRITid']
-            tempList[i]["FREPid"] = temp['FREPid']
-            tempList[i]["DRUGid"] = temp['DRUGid']
-        data['objects'] = tempList
-        return data
 
     @classmethod
     def post_preprocessor(self, data):
