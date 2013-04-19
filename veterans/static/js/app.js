@@ -9,22 +9,22 @@ veterans.config(['$routeProvider', function($routeProvider) {
     // druginfo   
     $routeProvider.when('/drug-list', {templateUrl: 'static/page/drug-list.html', controller: DrugListCtrl});
     
-    $routeProvider.when('/fixedrecipe', {templateUrl: 'static/page/fixedrecipe.html', controller:fixedrecipeCtrl});
+    $routeProvider.when('/fixedrecipe', {templateUrl: 'static/page/fixedrecipe.html', controller:FixedrecipeCtrl});
     
-    $routeProvider.when('/western_disease', {templateUrl: 'static/page/western_disease.html', controller: western_disease_Ctrl});
+    $routeProvider.when('/western_disease', {templateUrl: 'static/page/western_disease.html', controller: WesternDiseaseCtrl});
    
     $routeProvider.when('/chinese_disease', {templateUrl: 'static/page/chinese_disease.html', controller: ChineseDiseaseCtrl});
     
-    $routeProvider.when('/semiotic', {templateUrl: 'static/page/semiotic.html', controller: semioticCtrl});
+    $routeProvider.when('/semiotic', {templateUrl: 'static/page/semiotic.html', controller: SemioticCtrl});
     // addinfo
-    $routeProvider.when('/dmethod', {templateUrl: 'static/page/dmethod.html', controller: dmethodCtrl});
+    $routeProvider.when('/dmethod', {templateUrl: 'static/page/dmethod.html', controller: DmethodCtrl});
     
-    $routeProvider.when('/symptom', {templateUrl: 'static/page/symptom.html', controller: symptomCtrl});
+    $routeProvider.when('/symptom', {templateUrl: 'static/page/symptom.html', controller: SymptomCtrl});
     // sizhen connect action
     
-    $routeProvider.when('/dtemplate', {templateUrl: 'static/page/dtemplate.html', controller: dtemplateCtrl});
+    $routeProvider.when('/dtemplate', {templateUrl: 'static/page/dtemplate.html', controller: DtemplateCtrl});
     
-    $routeProvider.when('/examination', {templateUrl: 'static/page/examination.html', controller: examinationCtrl});
+    $routeProvider.when('/examination', {templateUrl: 'static/page/examination.html', controller: ExaminationCtrl});
    
     // otherwise
     $routeProvider.otherwise({redirectTo: '/welcome'});
