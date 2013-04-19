@@ -169,8 +169,8 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="fixedrecipeItem in new_fixedrecipe.fixedrecipeItems">
-                                <td>1</td>
-                                <td>{{fixedrecipeItem.drug_name}}</td>
+                                <td>{{fixedrecipeItem.sequence}}</td>
+                                <td>{{fixedrecipeItem.DRUGid}}</td>
                                 <td>
                                     <div class="control-group">
                                         <!-- Text input-->
@@ -187,7 +187,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><button class="btn btn-small btn-info" ng-click="alert(new_fixedrecipe_item)">删除</button></td>
+                                <td><button class="btn btn-small btn-info" ng-click="delete_fixedrecipe_item(fixedrecipeItem.FRITid)">删除</button></td>
                             </tr>
                             </tbody>
                             <tbody>

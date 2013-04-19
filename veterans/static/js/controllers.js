@@ -15,18 +15,21 @@ function SidebarCtrl($scope) {//{{{
 }//}}}
 
 function DrugListCtrl($scope, $http) {//{{{
-    angular.element(".breadcrumb").css("background-color", "#f9f9f9")
-    $scope.pagination = {}
+    angular.element(".breadcrumb").css("background-color", "#f9f9f9");
+    $scope.pagination = {};
     $scope.pagination.maxSize = 5; 
     $scope.msg = "";
-    $scope.drug_id = null;
+    //@scope.selected_drug_id 只在controller里使用
+    //在html要对一个药品进行修改时， 返回一个drug_id作为para
+    //controller把para赋给selected_drug_id, 用来查询和提交
+    $scope.selected_drug_id = null;
     $scope.view_or_not = null;
     $scope.queryStr = null;
 
     //get成功时调用的函数， 用于显示数据
     var listSuccess = function(data, status) { 
-        $scope.drug_list = data.objects
-        $scope.pagination.noOfPages = data.total_pages
+        $scope.drug_list = data.objects;
+        $scope.pagination.noOfPages = data.total_pages;
         $scope.pagination.currentPage = data.page;
         $scope.pagination.numResults = data.num_results;
     }
@@ -52,24 +55,24 @@ function DrugListCtrl($scope, $http) {//{{{
     //para是DRUGid or null， view_or_not 是控制仅查看还是可以修改
     $scope.open = function (para, view_or_not) {
         $scope.shouldBeOpen = true;
-        //若是点击“修改”
+        $scope.view_or_not = view_or_not;
+        $scope.selected_drug_id = para;
+        //若是点击“修改”or"详细"
         if (para != null) {
             $http.get('api/drug/'+para).success(function(data, status) { 
-                $scope.new_drug = data
+                //new_drug在弹出的表单中使用
+                $scope.new_drug = data;
             });
-            $scope.view_or_not = view_or_not;
-            $scope.drug_id = para
-            if (view_or_not == true) {
-                $scope.form_head = "详细"
-            } else {
-                $scope.form_head = "修改"
+            if (view_or_not == true) {//若“详细”
+                $scope.form_head = "详细";
+            } else {//若“修改”
+                $scope.form_head = "修改";
             }
-        } else {//若是点击“添加药品”
+        } else {//若“添加药品”
             $scope.form_head = "添加药品";
-            $scope.drug_id = null
-            $scope.new_drug = null
-            $scope.msg = ''
+            $scope.new_drug = null;
         }
+        $scope.msg = '';
     };
 
     //点击“关闭” 关闭弹出窗口
@@ -80,58 +83,60 @@ function DrugListCtrl($scope, $http) {//{{{
     //点击“提交” 提交新建或修改的drug
     $scope.submit = function () {
         //若是点击“修改”
-        if ($scope.drug_id != null) {
-            $http.put('api/drug/'+$scope.drug_id, $scope.new_drug).success(function(data, status) { 
-                $scope.msg = status
+        if ($scope.selected_drug_id != null) {
+            $http.put('api/drug/'+$scope.selected_drug_id, $scope.new_drug).success(function(data, status) { 
+                $scope.msg = status;
             });
         }else {//若是点击“新建药品”
             $http.post('api/drug', $scope.new_drug).success(function(data, status) { 
-                $scope.msg = status
+                $scope.msg = status;
             });
         }
+        $scope.msg = '';
     }; 
 
     //点击“删除” 弹出警示窗口 删除相应的drug
     $scope.delete = function (para) {
-        $scope.close_alert()
+        $scope.close_alert();
         $http.delete('api/drug/'+para).success(function(data) { 
             $scope.pagination.setPage($scope.pagination.currentPage);
         });
     }
 
     $scope.alert = function(para){
-        $scope.open_delete_alert = true
-        $scope.drug_to_delete = para
-    }
+        $scope.open_delete_alert = true;
+        $scope.drug_to_delete = para;
+    };
 
     $scope.close_alert= function(){
-        $scope.open_delete_alert = false
-    }
+        $scope.open_delete_alert = false;
+    };
 
+    //这儿的标点很奇特
     $scope.opts = {
-        backdropFade: true,
+        backdropFade:true,
         dialogFade:true
     };
 
 }//}}}
 
-function fixedrecipeCtrl($scope, $http) {
-    angular.element(".breadcrumb").css("background-color", "#f9f9f9")
-    $scope.pagination = {}
+function fixedrecipeCtrl($scope, $http) {//{{{
+    angular.element(".breadcrumb").css("background-color", "#f9f9f9");
+    $scope.pagination = {};
     $scope.pagination.maxSize = 5; 
     $scope.msg = "";
-    $scope.fixedrecipe_id = null;
+    $scope.selected_fixedrecipe_id = null;
     $scope.view_or_not = null;
     $scope.form_head = "添加处方";
     $scope.queryStr = null;
 
     //get成功时调用的函数， 用于显示数据
     var listSuccess = function(data, status) { 
-        $scope.fixedrecipe_list = data.objects
-        $scope.pagination.noOfPages = data.total_pages
+        $scope.fixedrecipe_list = data.objects;
+        $scope.pagination.noOfPages = data.total_pages;
         $scope.pagination.currentPage = data.page;
         $scope.pagination.numResults = data.num_results;
-    }
+    };
 
     //查询显示fixedrecipe列表
     $http.get('api/fixedrecipe').success(listSuccess);
@@ -148,20 +153,19 @@ function fixedrecipeCtrl($scope, $http) {
         var filters = [{"name": "name", "op": "like", "val": "%"+$scope.searchStr+"%"}];
         $scope.queryStr = JSON.stringify({"filters": filters});
         $http({method:"GET", url:"api/fixedrecipe", params:{"q":$scope.queryStr}}).success(listSuccess);
-    }
+    };
     
     //点击按钮“修改”or“详细”or“新建”， 弹出页面，修改or显示or新建表单
     //para是fixedrecipeid or null， view_or_not 是控制仅查看还是可以修改
     $scope.open = function (para, view_or_not) {
         $scope.shouldBeOpen = true;
+        $scope.view_or_not = view_or_not;
+        $scope.selected_fixedrecipe_id = para;
         //若是点击“修改”
         if (para != null) {
             $http.get('api/fixedrecipe/'+para).success(function(data, status) { 
-                $scope.new_fixedrecipe = data
-                console.log(data)
+                $scope.new_fixedrecipe = data;
             });
-            $scope.view_or_not = view_or_not;
-            $scope.fixedrecipe_id = para
             if (view_or_not == true) {
                 $scope.form_head = "详细"
             } else {
@@ -169,10 +173,9 @@ function fixedrecipeCtrl($scope, $http) {
             }
         } else {//若是点击“添加处方”
             $scope.form_head = "添加处方";
-            $scope.fixedrecipe_id = null
-            $scope.new_drug = null
-            $scope.msg = ''
-        }
+            $scope.new_fixedrecipe = null
+        };
+        $scope.msg = '';
     };
 
     //点击“关闭” 关闭弹出窗口
@@ -183,25 +186,19 @@ function fixedrecipeCtrl($scope, $http) {
     //点击“提交” 提交新建或修改的fixedrecipe
     $scope.submit = function () {
         //若是点击“修改”
-        if ($scope.fixedrecipe_id != null) {
-            $http.put('api/fixedrecipe/'+$scope.fixedrecipe_id, $scope.new_fixedrecipe).success(function(data, status) { 
+        if ($scope.selected_fixedrecipe_id != null) {
+            $http.put('api/fixedrecipe/'+$scope.selected_fixedrecipe_id, $scope.new_fixedrecipe).success(function(data, status) { 
                 $scope.msg = status
             });
         }else {//若是点击“新建处方”
             $http.post('api/fixedrecipe', $scope.new_fixedrecipe).success(function(data, status) { 
                 $scope.msg = status
             });
-        }
+        };
+        $scope.msg = null
     }; 
 
     //点击“删除” 弹出警示窗口 删除相应的fixedrecipe
-    $scope.delete = function (para) {
-        $scope.close_alert()
-        $http.delete('api/fixedrecipe/'+para).success(function(data) { 
-            $scope.pagination.setPage($scope.pagination.currentPage);
-        });
-    }
-
     $scope.alert = function(para){
         $scope.open_delete_alert = true
         $scope.fixedrecipe_to_delete = para
@@ -211,19 +208,39 @@ function fixedrecipeCtrl($scope, $http) {
         $scope.open_delete_alert = false
     }
 
+    $scope.delete = function (para) {
+        $scope.close_alert()
+        $http.delete('api/fixedrecipe/'+para).success(function(data) { 
+            $scope.pagination.setPage($scope.pagination.currentPage);
+        });
+    }
+
+    //在弹出框中点击“删除” 删除相应的fixedrecipe
+//    $scope.delete_fixedrecipe_item = function (FREPid, FRITid) {
+//        $http.delete('api/fixedrecipe_item/'+FRITid).success(function(data) { 
+//            $http.get('api/fixedrecipe/'+FREPid).success(function(data) { 
+//                $scope.new_fixedrecipe = data;
+//            });
+//        });
+//    }
+    $scope.delete_fixedrecipe_item = function (FRITid, hashkey) {
+        console.log($scope.new_fixedrecipe['fixedrecipeItems'])
+        console.log($$hashkey)
+    }
+
     $scope.opts = {
         backdropFade: true,
         dialogFade:true
     };
 
-} 
+} //}}}
 
 function ChineseDiseaseCtrl($scope, $http) {//{{{
     angular.element(".breadcrumb").css("background-color", "#f9f9f9")
     $scope.pagination = {}
     $scope.pagination.maxSize = 5; 
     $scope.msg = "";
-    $scope.chinese_disease_id= null;
+    $scope.selected_chinese_disease_id= null;
     $scope.view_or_not = null;
     $scope.form_head = "添加中医疾病";
     $scope.queryStr = null;
@@ -257,13 +274,13 @@ function ChineseDiseaseCtrl($scope, $http) {//{{{
     //para是CDISid or null， view_or_not 是控制仅查看还是可以修改
     $scope.open = function (para, view_or_not) {
         $scope.shouldBeOpen = true;
+        $scope.selected_chinese_disease_id = para
+        $scope.view_or_not = view_or_not;
         //若是点击“修改”
         if (para != null) {
             $http.get('api/chinese_disease/'+para).success(function(data, status) { 
                 $scope.new_chinese_disease= data
             });
-            $scope.chinese_disease_id = para
-            $scope.view_or_not = view_or_not;
             if (view_or_not == true) {
                 $scope.form_head = "详细"
             } else {
@@ -271,11 +288,9 @@ function ChineseDiseaseCtrl($scope, $http) {//{{{
             }
         } else {//若是点击“添加药品”
             $scope.form_head = "添加中医疾病"
-            $scope.chinese_disease_id = null
             $scope.new_chinese_disease = null
-            $scope.msg = ''
-            $scope.view_or_not = view_or_not;
         }
+            $scope.msg = ''
     };
     //点击“关闭” 关闭弹出窗口
     $scope.close = function () {
@@ -284,8 +299,8 @@ function ChineseDiseaseCtrl($scope, $http) {//{{{
     //点击“提交” 提交新建或修改的chinese_disease
     $scope.submit = function () {
         //若是点击“修改”
-        if ($scope.chinese_disease_id!= null) {
-            $http.put('api/chinese_disease/'+$scope.chinese_disease_id, $scope.new_chinese_disease).success(function(data, status) { 
+        if ($scope.selected_chinese_disease_id!= null) {
+            $http.put('api/chinese_disease/'+$scope.selected_chinese_disease_id, $scope.new_chinese_disease).success(function(data, status) { 
                 $scope.msg = status
             });
         }else {//若是点击“新建药品”
@@ -293,6 +308,7 @@ function ChineseDiseaseCtrl($scope, $http) {//{{{
                 $scope.msg = status
             });
         }
+        $scope.msg = null
     }; 
 
     //点击“删除” 弹出警示窗口 删除相应的chinese_disease
