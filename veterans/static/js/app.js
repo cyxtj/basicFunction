@@ -11,7 +11,7 @@ veterans.config(['$routeProvider', function($routeProvider) {
     
     $routeProvider.when('/fixedrecipe', {templateUrl: 'static/page/fixedrecipe.html', controller:fixedrecipeCtrl});
     
-    $routeProvider.when('/wdisease', {templateUrl: 'static/page/wdisease.html', controller: wdiseaseCtrl});
+    $routeProvider.when('/western_disease', {templateUrl: 'static/page/western_disease.html', controller: western_disease_Ctrl});
    
     $routeProvider.when('/chinese_disease', {templateUrl: 'static/page/chinese_disease.html', controller: ChineseDiseaseCtrl});
     

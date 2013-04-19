@@ -19,3 +19,5 @@ manager.create_api(fixedrecipeItem, methods=['GET','POST','DELETE', 'PUT'], prep
 
 # api for chinese_disease
 manager.create_api(ChineseDisease, methods=['GET','POST', 'DELETE', 'PUT'], preprocessors=dict(POST=[ChineseDisease.post_preprocessor]), postprocessors=dict(GET_MANY= [ChineseDisease.get_all]))
+# api for western_disease
+manager.create_api(western_disease, methods=['GET','POST', 'DELETE', 'PUT'], postprocessors=dict(GET_MANY= [western_disease.get_all]))
